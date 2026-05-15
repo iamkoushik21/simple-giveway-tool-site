@@ -1,0 +1,83 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #fdfdfd;
+  --surface: #ffffff;
+  --border: #e8ebf0;
+  --border-hover: #d1d9e6;
+  --text: #1a1a1a;
+  --muted: #718096;
+  --accent: #2d3436;
+  --primary: #00A57D; 
+  --primary-glow: rgba(0, 165, 125, 0.1);
+  --gold-glow: rgba(212, 175, 55, 0.2);
+  --gold-light: #fcf6ba;
+  --gold-dark: #bf953f;
+  --success: #10b981;
+  --success-bg: #f0fdf4;
+  --error: #ef4444;
+  --error-bg: #fef2f2;
+  --radius: 24px;
+  --radius-sm: 12px;
+}
+
+html, body {
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .premium-text {
+  font-family: var(--font-montserrat), sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+/* Force Font Variable Defaults */
+:root {
+  --font-inter: 'Inter', sans-serif;
+  --font-montserrat: 'Montserrat', sans-serif;
+}
+
+/* Luxury Soft Background */
+body {
+  background-image: 
+    radial-gradient(circle at 0% 0%, rgba(59, 130, 246, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 100% 100%, rgba(244, 63, 94, 0.03) 0%, transparent 40%),
+    radial-gradient(circle, rgba(0, 0, 0, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 30px 30px;
+}
+
+.premium-card {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.02), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+}
+
+.input-focus:focus-within {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 4px var(--primary-glow);
+}
+
+.btn-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.btn-hover:active {
+  transform: translateY(0);
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: inherit;
+}
+
+input {
+  font-family: inherit;
+  outline: none;
+}
