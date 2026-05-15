@@ -15,8 +15,8 @@ export default function AdminDashboard() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [search, setSearch] = useState("");
 
-  // Simple hardcoded password for admin - CHANGE THIS OR USE ENV
-  const ADMIN_PASSWORD = "Aramkore@##$54545"; 
+  // Password from environment variable for security
+  const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "Aramkore@##$54545"; 
 
   useEffect(() => {
     if (isAuthenticated) {
