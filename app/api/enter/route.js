@@ -18,7 +18,7 @@ export async function POST(request) {
 
     if (!settings?.value?.active) {
       return Response.json(
-        { error: "Giveaway is currently paused by the admin." },
+        { error: "Giveaway abhi closed ho chuka hai, next time try karein!" },
         { status: 403 }
       );
     }
