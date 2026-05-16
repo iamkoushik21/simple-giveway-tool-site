@@ -304,11 +304,23 @@ export default function GiveawayPage() {
   const [result, setResult] = useState(null); // { lucky_number, username }
   const [entries, setEntries] = useState([]);
   const [totalCount, setTotalCount] = useState(0);
+  const [isGiveawayActive, setIsGiveawayActive] = useState(true);
 
   // Fetch latest entries on mount
   useEffect(() => {
     fetchEntries();
+    fetchStatus();
   }, []);
+
+  async function fetchStatus() {
+    try {
+      const res = await fetch("/api/settings");
+      const data = await res.json();
+      setIsGiveawayActive(data.active);
+    } catch (err) {
+      console.error("Failed to fetch status", err);
+    }
+  }
 
   async function fetchEntries() {
     const { data, count } = await supabase
@@ -379,51 +391,76 @@ export default function GiveawayPage() {
   return (
     <main style={s.page}>
       {!result ? (
-        /* ── Entry Form ── */
+        /* ── Entry Form or Closed UI ── */
         <div style={s.card}>
           <div style={s.badge}>
             <GPTIcon size={12} />
-            Limited Edition
+            {isGiveawayActive ? "Limited Edition" : "Giveaway Closed"}
           </div>
 
-          <h1 style={s.title}>Exclusive ChatGPT GO Giveaway</h1>
-          <p style={s.subtitle}>
-            3 Months of pure power! Skip the wait and join the elite. Enter your handle now to claim your lucky spot.
-          </p>
+          <h1 style={s.title}>
+            {isGiveawayActive ? "Exclusive ChatGPT GO Giveaway" : "Giveaway Participation is Closed"}
+          </h1>
+          
+          {isGiveawayActive ? (
+            <>
+              <p style={s.subtitle}>
+                3 Months of pure power! Skip the wait and join the elite. Enter your handle now to claim your lucky spot.
+              </p>
 
-          <div style={s.inputWrap} className="input-focus">
-            <span style={s.atSign}>@</span>
-            <input
-              style={s.input}
-              type="text"
-              placeholder="Enter your Instagram username"
-              value={username}
-              onChange={(e) => { 
-                const val = e.target.value.replace(/^@/, "");
-                setUsername(val); 
-                setError(""); 
-              }}
-              onKeyDown={handleKeyDown}
-              autoComplete="off"
-              autoCapitalize="none"
-              spellCheck={false}
-            />
-          </div>
+              <div style={s.inputWrap} className="input-focus">
+                <span style={s.atSign}>@</span>
+                <input
+                  style={s.input}
+                  type="text"
+                  placeholder="Enter your Instagram username"
+                  value={username}
+                  onChange={(e) => { 
+                    const val = e.target.value.replace(/^@/, "");
+                    setUsername(val); 
+                    setError(""); 
+                  }}
+                  onKeyDown={handleKeyDown}
+                  autoComplete="off"
+                  autoCapitalize="none"
+                  spellCheck={false}
+                />
+              </div>
 
-          {error && <div style={s.errorBox}>{error}</div>}
+              {error && <div style={s.errorBox}>{error}</div>}
 
-          <button
-            style={{ ...s.btn, ...(loading || !username.trim() ? s.btnDisabled : {}) }}
-            onClick={handleSubmit}
-            disabled={loading || !username.trim()}
-            className="btn-hover"
-          >
-            {loading ? <Spinner /> : "🎲  Tap to Get My Lucky Number"}
-          </button>
+              <button
+                style={{ ...s.btn, ...(loading || !username.trim() ? s.btnDisabled : {}) }}
+                onClick={handleSubmit}
+                disabled={loading || !username.trim()}
+                className="btn-hover"
+              >
+                {loading ? <Spinner /> : "🎲  Tap to Get My Lucky Number"}
+              </button>
 
-          <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 14 }}>
-            Each username gets exactly one unique number (1–1000).
-          </p>
+              <p style={{ fontSize: 12, color: "var(--muted)", marginTop: 14 }}>
+                Each username gets exactly one unique number (1–1000).
+              </p>
+            </>
+          ) : (
+            <div style={{ marginTop: "1rem" }}>
+              <p style={s.subtitle}>
+                Thank you for your interest! The participation period has ended. The lucky winner will be announced very soon.
+              </p>
+              
+              <div style={{ marginTop: "2rem", padding: "1.5rem", background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "12px" }}>
+                <p style={{ fontSize: 13, fontWeight: 700, color: "#1e293b", textTransform: "uppercase", letterSpacing: "0.05em", marginBottom: 5 }}>
+                  Grand Winner Announcement
+                </p>
+                <p style={{ fontSize: 13, color: "#64748b" }}>
+                  Stay tuned! Winners will be declared shortly.
+                </p>
+                <div style={{ marginTop: "1rem" }}>
+                   <Countdown />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         /* ── Result ── */
