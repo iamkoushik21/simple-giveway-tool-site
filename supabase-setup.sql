@@ -13,11 +13,24 @@ CREATE INDEX idx_entries_username ON entries (username);
 CREATE INDEX idx_entries_lucky_number ON entries (lucky_number);
 CREATE INDEX idx_entries_ip_address ON entries (ip_address);
 
+-- Settings Table for Giveaway On/Off
+CREATE TABLE settings (
+  key   text PRIMARY KEY,
+  value jsonb NOT NULL
+);
+
+INSERT INTO settings (key, value) VALUES ('giveaway_status', '{"active": true}');
+
 -- Optional: allow public read so the entries list shows on the page
 ALTER TABLE entries ENABLE ROW LEVEL SECURITY;
+ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Anyone can read entries"
   ON entries FOR SELECT
+  USING (true);
+
+CREATE POLICY "Anyone can read settings"
+  ON settings FOR SELECT
   USING (true);
 
 -- Writes go through the API route using the service role key (bypasses RLS)

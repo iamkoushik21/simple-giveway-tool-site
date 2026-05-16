@@ -14,6 +14,8 @@ export default function AdminDashboard() {
   const [pass, setPass] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [search, setSearch] = useState("");
+  const [isGiveawayActive, setIsGiveawayActive] = useState(true);
+  const [toggling, setToggling] = useState(false);
 
   // Password from environment variable for security
   const ADMIN_PASSWORD = process.env.NEXT_PUBLIC_ADMIN_PASSWORD || "Aramkore@##$54545"; 
@@ -21,8 +23,35 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchEntries();
+      fetchStatus();
     }
   }, [isAuthenticated]);
+
+  async function fetchStatus() {
+    const res = await fetch("/api/settings");
+    const data = await res.json();
+    setIsGiveawayActive(data.active);
+  }
+
+  async function toggleGiveaway() {
+    setToggling(true);
+    const newStatus = !isGiveawayActive;
+    try {
+      const res = await fetch("/api/settings", {
+        method: "POST",
+        body: JSON.stringify({ active: newStatus, password: pass }),
+        headers: { "Content-Type": "application/json" }
+      });
+      if (res.ok) {
+        setIsGiveawayActive(newStatus);
+        alert(`Giveaway is now ${newStatus ? "ON" : "OFF"}`);
+      }
+    } catch (err) {
+      alert("Error toggling giveaway");
+    } finally {
+      setToggling(false);
+    }
+  }
 
   async function fetchEntries() {
     setLoading(true);
@@ -114,6 +143,24 @@ export default function AdminDashboard() {
           <div style={s.statCard}>
             <span style={s.statLabel}>Total Entries</span>
             <span style={s.statValue}>{entries.length} / 1000</span>
+          </div>
+
+          <div style={{...s.statCard, marginLeft: "1rem", border: isGiveawayActive ? "2px solid #10a37f" : "2px solid #ef4444" }}>
+            <span style={s.statLabel}>Status: {isGiveawayActive ? "🟢 ON" : "🔴 OFF"}</span>
+            <button 
+              onClick={toggleGiveaway} 
+              disabled={toggling}
+              style={{
+                ...s.btn, 
+                marginTop: "0.5rem", 
+                padding: "8px 15px", 
+                width: "auto",
+                fontSize: 12,
+                background: isGiveawayActive ? "#ef4444" : "#10a37f"
+              }}
+            >
+              {toggling ? "Wait..." : isGiveawayActive ? "Stop Giveaway" : "Start Giveaway"}
+            </button>
           </div>
         </div>
 

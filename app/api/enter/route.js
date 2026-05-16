@@ -9,6 +9,20 @@ const MAX_NUMBER = 1000;
 
 export async function POST(request) {
   try {
+    // 0. Check if giveaway is active
+    const { data: settings } = await supabase
+      .from("settings")
+      .select("value")
+      .eq("key", "giveaway_status")
+      .single();
+
+    if (!settings?.value?.active) {
+      return Response.json(
+        { error: "Giveaway is currently paused by the admin." },
+        { status: 403 }
+      );
+    }
+
     const { username } = await request.json();
 
     // Get IP Address from headers (works on Vercel and most proxies)
